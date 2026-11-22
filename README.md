@@ -47,7 +47,7 @@ The lesson: a Sigma rule only works if the backend maps its field names to the f
 .\tests\Test-PsExecRules.ps1 -Chainsaw C:\tools\chainsaw\chainsaw.exe -Mapping C:\tools\chainsaw\mappings\sigma-event-logs-custom.yml
 ```
 
-The script was written without being able to run Chainsaw where it was drafted, so if a result looks wrong, check the raw output first.
+Run on Windows with Chainsaw 2.18.0: all six checks passed.
 
 ## Validation (CI)
 
