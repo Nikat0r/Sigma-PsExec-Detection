@@ -93,10 +93,14 @@ try {
     foreach ($ruleFile in $rules.Keys) {
         $rulePath = Join-Path $RulesDir $ruleFile
         if (-not (Test-Path $rulePath)) { throw "Rule not found: $rulePath" }
-
-        $raw = & $Chainsaw hunt $evtx -s $rulePath --mapping $Mapping --json 2>&1 | Out-String
+	
+        $prevEap = $ErrorActionPreference
+	$ErrorActionPreference = 'Continue'
+	$raw = (& $Chainsaw hunt $evtx -s $rulePath --mapping $Mapping --json 2>&1 |
+        ForEach-Object { $_.ToString() }) -join "`n"
+	$ErrorActionPreference = $prevEap
         if ($ShowRaw) { Write-Host "---- raw Chainsaw output for $ruleFile ----"; Write-Host $raw }
-
+	
         Write-Host ""
         Write-Host "Rule: $ruleFile"
         foreach ($name in $services.Keys) {
