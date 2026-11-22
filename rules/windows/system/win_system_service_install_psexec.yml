@@ -1,0 +1,27 @@
+title: PsExec Service Installation
+id: 9863a3b0-7ea8-4720-ab00-515ed0b66d65
+status: experimental
+description: Detects the installation of the PsExec service (PSEXESVC), a potential indication of lateral movement or remote execution.
+author: Abdelmoize Baba
+date: 2026-11-16
+tags:
+    - attack.lateral-movement
+    - attack.execution
+    - attack.t1021.002
+    - attack.t1569.002
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+    - https://attack.mitre.org/techniques/T1569/002/
+logsource:
+    product: windows
+    service: system
+detection:
+    selection_event:
+        EventID: 7045
+    selection_psexec:
+        - ServiceName: 'PSEXESVC'
+        - ImagePath|endswith: '\PSEXESVC.exe'
+    condition: selection_event and selection_psexec
+falsepositives:
+    - Legitimate IT administration, endpoint management software, and automated deployment tools.
+level: medium

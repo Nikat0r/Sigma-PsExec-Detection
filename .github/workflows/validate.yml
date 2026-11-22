@@ -1,0 +1,26 @@
+name: Validate Sigma rules
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install sigma-cli and the Splunk backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install sigma-cli pysigma-backend-splunk pysigma-pipeline-windows
+
+      - name: Check rule syntax and conventions
+        run: sigma check rules/
+
+      - name: Convert every rule to Splunk (fails if a rule cannot be converted)
+        run: sigma convert -t splunk -p splunk_windows rules/

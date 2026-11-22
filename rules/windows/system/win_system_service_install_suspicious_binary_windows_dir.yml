@@ -1,0 +1,30 @@
+title: Suspicious Service Binary in Windows Directory (Possible Renamed PsExec)
+id: f6cc9b09-21ae-4928-837b-1e7c4634b262
+status: experimental
+description: Detects the installation of a service whose binary sits directly in the Windows directory, which is where PsExec drops its service binary (via ADMIN$) even when the service is renamed. A heuristic with more noise than the default-name rule.
+author: Abdelmoize Baba
+date: 2026-11-16
+tags:
+    - attack.lateral-movement
+    - attack.execution
+    - attack.t1021.002
+    - attack.t1569.002
+references:
+    - https://attack.mitre.org/techniques/T1021/002/
+    - https://attack.mitre.org/techniques/T1569/002/
+logsource:
+    product: windows
+    service: system
+detection:
+    selection_event:
+        EventID: 7045
+    selection_renamed:
+        ImagePath|re: '(?i)^"?(%SystemRoot%|C:\\Windows)\\[^\\]+\.exe"?$'
+        ServiceType: 'user mode service'
+        StartType: 'demand start'
+        AccountName: 'LocalSystem'
+    condition: selection_event and selection_renamed
+falsepositives:
+    - Legitimate IT administration, endpoint management software, and automated deployment tools.
+    - Custom administrative tools that install demand-start binaries directly into C:\Windows\.
+level: medium
